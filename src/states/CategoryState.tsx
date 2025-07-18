@@ -18,6 +18,7 @@ import { getFirebaseErrorMessage } from "../utils/firebaseErrors"
 import { toast } from "react-toastify"
 import CategoryContext from "../contexts/CategoryContext"
 import type { CategoryInterface } from "../types/CategoryInterface"
+import { slugify } from "../utils/slugify"
 
 export default function CategoryState({
   children,
@@ -47,6 +48,7 @@ export default function CategoryState({
     try {
       await addDoc(collection(db, "categories"), {
         name: values.name,
+        slug: slugify(values.name),
         createdAt: serverTimestamp(),
       })
       toast.success("Kategori eklendi")
@@ -93,6 +95,7 @@ export default function CategoryState({
       const ref = doc(db, "categories", id)
       await updateDoc(ref, {
         name: values.name,
+        slug: slugify(values.name),
         updatedAt: serverTimestamp(),
       })
       toast.success("Kategori düzenlendi")

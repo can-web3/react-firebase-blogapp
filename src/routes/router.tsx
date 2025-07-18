@@ -9,6 +9,9 @@ import Dashboard from "../pages/admin/Dashboard";
 import AdminCategories from "../pages/admin/categories/AdminCategories";
 import AdminCreateCategory from "../pages/admin/categories/AdminCreateCategory";
 import AdminEditCategory from "../pages/admin/categories/AdminEditCategory";
+import AdminBlogs from "../pages/admin/blogs/AdminBlogs";
+import AdminCreateBlog from "../pages/admin/blogs/AdminCreateBlog";
+import AdminEditBlog from "../pages/admin/blogs/AdminEditBlog";
 
 const router = createBrowserRouter([
     {
@@ -38,6 +41,10 @@ const router = createBrowserRouter([
             { path: 'kategoriler', element: <AdminCategories /> },
             { path: 'kategoriler/ekle', element: <AdminCreateCategory /> },
             { path: 'kategoriler/:id/duzenle', element: <AdminEditCategory /> },
+
+            { path: 'bloglar', element: <AdminBlogs /> },
+            { path: 'bloglar/ekle', element: <AdminCreateBlog /> },
+            { path: 'bloglar/:id/duzenle', element: <AdminEditBlog /> },
         ]
     }
 ])

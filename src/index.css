@@ -7,7 +7,11 @@
 
 @layer components {
   .container {
-    @apply container mx-auto py-4 lg:px-0 px-2;
+    @apply container mx-auto py-4 xl:px-0 px-2;
+  }
+
+  .badge-primary {
+    @apply bg-orange-600 px-2 py-1 text-sm inline-block mb-2 text-white;
   }
 
   .btn-primary {
@@ -39,6 +43,10 @@
   }
 
   .input {
+    @apply bg-gray-50 border border-gray-300 outline-0 text-sm rounded-lg focus:border-orange-600 block w-full p-2.5;
+  }
+
+  .select {
     @apply bg-gray-50 border border-gray-300 outline-0 text-sm rounded-lg focus:border-orange-600 block w-full p-2.5;
   }
 

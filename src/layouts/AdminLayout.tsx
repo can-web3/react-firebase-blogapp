@@ -39,6 +39,11 @@ export default function AdminLayout() {
               Kategoriler
             </Link>
           </li>
+          <li>
+            <Link to="/admin/bloglar" className="block p-2 hover:bg-orange-600 hover:text-white">
+              Bloglar
+            </Link>
+          </li>
         </ul>
       </div>
 

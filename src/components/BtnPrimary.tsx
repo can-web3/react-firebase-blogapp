@@ -4,6 +4,7 @@ export default function BtnPrimary({
   return (
     <div>
         <button
+            type="submit"
             className="btn-primary mt-4"
             disabled={isSubmitting}
         >

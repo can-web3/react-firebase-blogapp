@@ -6,10 +6,6 @@ import { categoryValidation } from "../../../validations/admin/CategoryValidatio
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import CategoryContext from "../../../contexts/CategoryContext";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../firebase";
-import { toast } from "react-toastify";
-import type { CategoryInterface } from "../../../types/CategoryInterface";
 
 export default function AdminEditCategory() {
     const { id } = useParams()
