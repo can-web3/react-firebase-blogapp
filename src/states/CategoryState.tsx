@@ -118,6 +118,34 @@ export default function CategoryState({
     }
   }
 
+  const getCategoryBySlug = async (slug: string): Promise<boolean> => {
+    const q = query(
+      collection(db, 'categories'),
+      where('slug', '==', slug)
+    )
+    const snap = await getDocs(q)
+
+    if (snap.empty) {
+      toast.error('Böyle bir kategori bulunamadı')
+      return false
+    }
+
+    const docSnap = snap.docs[0]
+    const data = docSnap.data() as Omit<CategoryInterface, 'id'>
+
+    dispatch({
+      type: 'GET_CATEGORY',
+      category: {
+        id: docSnap.id,
+        name: data.name,
+        slug: data.slug,      
+        createdAt: data.createdAt
+      }
+    })
+
+    return true
+  }
+
   return (
     <CategoryContext.Provider
       value={{
@@ -128,6 +156,7 @@ export default function CategoryState({
         getCategoryById,
         editCategoryById,
         deleteCategoryById,
+        getCategoryBySlug,
       }}
     >
       {children}

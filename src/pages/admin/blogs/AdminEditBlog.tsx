@@ -14,20 +14,21 @@ import BlogContext from "../../../contexts/BlogContext";
 export default function AdminEditBlog() {
     const { id } = useParams()
     const navigate = useNavigate()
-    const { blog, createBlog, getBlogById } = useContext(BlogContext)
+    const { blog, editBlogById, getBlogById } = useContext(BlogContext)
     const { categories, getCategories } = useContext(CategoryContext)
     const { values, errors, isSubmitting, handleSubmit, handleChange, setFieldValue } = useFormik({
         initialValues: {
             image: null as File | null,
-            title: '',
-            categoryId: '',
-            content: '',
+            title: blog?.title || '',
+            categoryId: blog?.categoryId || '',
+            content: blog?.content || '',
         },
+        enableReinitialize: true,
         validationSchema: blogValidation(true),
         validateOnBlur: false,
         validateOnChange: false,
         onSubmit: async values => {
-            if(await createBlog(values))
+            if(await editBlogById(id, values))
                 navigate('/admin/bloglar')
         }
     })
@@ -46,8 +47,6 @@ export default function AdminEditBlog() {
                 title='Blog Düzenle'
             />
 
-            <p>blog: {JSON.stringify(blog, null, 2)}</p>
-
             <div className="bg-white p-4 mt-4 border border-gray-200">
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3">
                     {/* image */}
@@ -60,6 +59,7 @@ export default function AdminEditBlog() {
                             setFieldValue("image", file)
                         }}
                         error={errors.image}
+                        required={false}
                     />
 
                     {/* title */}

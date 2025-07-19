@@ -34,6 +34,7 @@ export default function UserState({
                 displayName: values.username,
                 email: values.email,
                 role: 'user',
+                favorites: [],
                 createdAt: serverTimestamp(),
             });
 

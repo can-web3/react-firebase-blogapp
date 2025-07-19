@@ -1,18 +1,21 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from '../components/Navbar'
-import { useContext } from 'react'
 import AuthContext from '../contexts/AuthContext'
+import Github from '../components/Github'
+import Footer from '../components/Footer'
 
 export default function AppLayout() {
-  const { auth } = useContext(AuthContext)
-
   return (
-    <>
+    <div className='flex flex-col min-h-screen'>
+        <Github />
+
         <Navbar />
 
-        <p>dasdsa {JSON.stringify(auth, null, 2)}</p>
-        
-        <Outlet />
-    </>
+        <main className='flex-1'>
+          <Outlet />
+        </main>
+
+        <Footer />
+    </div>
   )
 }

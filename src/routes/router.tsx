@@ -12,6 +12,9 @@ import AdminEditCategory from "../pages/admin/categories/AdminEditCategory";
 import AdminBlogs from "../pages/admin/blogs/AdminBlogs";
 import AdminCreateBlog from "../pages/admin/blogs/AdminCreateBlog";
 import AdminEditBlog from "../pages/admin/blogs/AdminEditBlog";
+import BlogDetail from "../pages/BlogDetail";
+import CategoryBlogs from "../pages/CategoryBlogs";
+import BlogsPage from "../pages/BlogsPage";
 
 const router = createBrowserRouter([
     {
@@ -19,6 +22,10 @@ const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
             { path: '', element: <Home /> },
+            { path: 'bloglar', element: <BlogsPage /> },
+            { path: 'blog/:slug', element: <BlogDetail /> },
+            { path: 'kategori/:slug', element: <CategoryBlogs /> },
+            { path: 'favorilerim', element: <CategoryBlogs /> },
 
             // guest middleware
             { 

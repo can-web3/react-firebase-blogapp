@@ -24,7 +24,7 @@ export default function AdminLayout() {
   return (
     <div className="flex h-screen">
       {/* sidebar */}
-      <div className="lg:inline-block hidden border-r-[1px] border-gray-400">
+      <div className="min-w-[200px] lg:inline-block hidden border-r-[1px] border-gray-400">
         <div className="border-b-[1px] border-gray-400 h-[70px]">
           <Logo className="p-6 mx-auto" />
         </div>

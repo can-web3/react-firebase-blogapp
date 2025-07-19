@@ -1,4 +1,4 @@
-import { useReducer } from "react"
+import { useReducer, useState } from "react"
 import {
   addDoc,
   collection,
@@ -31,6 +31,7 @@ export default function BlogState({
     blogs: [],
     blog: null
   }
+  const [loading, setLoading] = useState(false)
   const [state, dispatch] = useReducer(BlogReducer, initialState)
 
   const getBlogs = async () => {
@@ -81,6 +82,7 @@ export default function BlogState({
           image: image,
           title: values.title,
           slug: slugify(values.title),
+          content: values.content,
           categoryId: values.categoryId,
           createdAt: serverTimestamp(),
       }
@@ -93,7 +95,7 @@ export default function BlogState({
       console.log('err', err)
       toast.error(err.message || "Yükleme sırasında hata oluştu")
       return false
-  }
+    }
   }
 
   const getBlogById = async (id: string): Promise<boolean> => {
@@ -134,26 +136,41 @@ export default function BlogState({
 
   const editBlogById = async (id, values) => {
     try {
-      const uq = query(
-        collection(db, "blogs"),
-        where("name", "==", values.name)
-      )
-      const usnap = await getDocs(uq)
-      const conflict = usnap.docs.some(d => d.id !== id)
-      if (conflict) {
-        toast.error("Bu isimde başka bir blog zaten var")
-        return false
+      if (values.title) {
+        const uq = query(
+          collection(db, "blogs"),
+          where("title", "==", values.title)
+        )
+        const usnap = await getDocs(uq)
+        const conflict = usnap.docs.some(d => d.id !== id)
+        if (conflict) {
+          toast.error("Bu başlıkta başka bir blog zaten var")
+          return false
+        }
       }
 
       const ref = doc(db, "blogs", id)
-      await updateDoc(ref, {
-        name: values.name,
+
+      const data = {
+        title: values.title,
+        slug: slugify(values.title),
+        content: values.content,
+        categoryId: values.categoryId,
         updatedAt: serverTimestamp(),
-      })
+      }
+
+      if (values.image) {
+        const imageUrl = await uploadImage(values.image)
+        data.image = imageUrl
+      }
+
+      await updateDoc(ref, data)
+
       toast.success("Blog düzenlendi")
       return true
-    } catch (err: any) {
-      console.log('err', err)
+
+    } catch (err) {
+      console.error("editBlogById error:", err)
       toast.error(getFirebaseErrorMessage(err.code || err.message))
       return false
     }
@@ -170,16 +187,107 @@ export default function BlogState({
     }
   }
 
+  const getBlogBySlug = async (slug: string): Promise<boolean> => {
+    setLoading(true)
+    const blogsRef = collection(db, "blogs")
+    const q = query(blogsRef, where("slug", "==", slug))
+    const snap = await getDocs(q)
+
+    if (snap.empty) {
+      toast.error("Böyle bir blog bulunamadı")
+      setLoading(false)
+      return false
+    }
+
+    const docSnap = snap.docs[0]
+    const blogData = docSnap.data() as Omit<BlogInterface, "id">
+
+    let category: (CategoryInterface & { id: string }) | null = null
+    try {
+      const catRef = doc(db, "categories", blogData.categoryId)
+      const catSnap = await getDoc(catRef)
+      if (catSnap.exists()) {
+        category = {
+          id: catSnap.id,
+          ...(catSnap.data() as CategoryInterface),
+        }
+      }
+    } catch (err) {
+      console.error("Kategori yüklenirken hata:", err)
+    }finally{
+      setLoading(false)
+    }
+
+    dispatch({
+      type: "GET_BLOG",
+      blog: {
+        id: docSnap.id,
+        ...blogData,
+        category,
+      },
+    })
+
+    return true
+  }
+
+  const getBlogsByCategorySlug = async (slug: string): Promise<boolean> => {
+    try {
+      setLoading(true)
+
+      const catQ = query(
+        collection(db, "categories"),
+        where("slug", "==", slug)
+      )
+      const catSnap = await getDocs(catQ)
+      if (catSnap.empty) {
+        toast.error("Böyle bir kategori bulunamadı")
+        return false
+      }
+      const catDoc = catSnap.docs[0]
+      const catData = catDoc.data() as CategoryInterface
+      const categoryObj = { id: catDoc.id, ...catData }
+
+      const blogQ = query(
+        collection(db, "blogs"),
+        where("categoryId", "==", catDoc.id),
+        orderBy("createdAt", "desc")
+      )
+      const blogSnap = await getDocs(blogQ)
+      // 3) Her blog’a category bilgisini ekle
+      const blogs: Array<BlogInterface & { category: typeof categoryObj }> =
+        blogSnap.docs.map(docSnap => {
+          const blogData = docSnap.data() as Omit<BlogInterface, "id">
+          return {
+            id: docSnap.id,
+            ...blogData,
+            category: categoryObj
+          }
+        })
+
+      dispatch({ type: "GET_BLOGS", blogs })
+      return true
+    } catch (err: any) {
+      console.error("getBlogsByCategorySlug error:", err)
+      toast.error("Bloglar yüklenirken hata oluştu")
+      return false
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <BlogContext.Provider
       value={{
         blogs: state.blogs,
         blog: state.blog,
+        loading: state.loading,
         getBlogs,
         createBlog,
         getBlogById,
         editBlogById,
         deleteBlogById,
+        getBlogBySlug,
+        getBlogsByCategorySlug,
       }}
     >
       {children}

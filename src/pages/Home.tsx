@@ -1,31 +1,40 @@
 import { useContext, useEffect } from "react"
 import BlogContext from "../contexts/BlogContext"
 import { Link } from "react-router-dom"
+import Blogs from "../components/Blogs"
+import AuthContext from "../contexts/AuthContext"
+import { collection, getDoc, getDocs, query } from "firebase/firestore"
+import { db } from "../firebase"
+import type { CategoryInterface } from "../types/CategoryInterface"
 
 export default function Home() {
+  const { auth } = useContext(AuthContext)
   const { blogs, getBlogs } = useContext(BlogContext)
+
+  const getUsers = async () => {
+    try {
+      const usersCol = collection(db, "users")
+      const userSnap = await getDocs(usersCol)
+      const users = userSnap.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<UserInterface, "id">)
+      }))
+      console.log("users", users)
+    } catch (err) {
+      console.error("getUsers error:", err)
+    }
+  }
 
   useEffect(() => {
     getBlogs()
+    getUsers()
   }, [])
 
   return (
     <main>
       <section className="container">
-        <h1 className="text-xl font-semibold mb-3">Haberler</h1>
-        { blogs && (
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-6">
-            { blogs.map(blog => (
-              <div className="border border-gray-400">
-                <img className="w-full max-h-48 object-cover" src={blog.image} alt="" />
-                <div className="p-2">
-                  <Link to={`/kategori/${blog.category?.slug}`} className="badge-primary">{blog.category?.name}</Link>
-                  <h2 className="font-semibold">{blog.title}</h2>
-                </div>
-              </div>
-            )) }
-          </div>
-        ) }
+        <h1>Anasayfa</h1>
+        <Blogs blogs={blogs} />
       </section>
     </main>
   )

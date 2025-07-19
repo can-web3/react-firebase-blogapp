@@ -34,6 +34,17 @@ export default function Login() {
                 <h1 className="text-center text-xl font-semibold mb-2">Giriş Yap</h1>
                 <p className="text-center text-gray-600 font-medium text-sm">Giriş yapmak için lütfen aşağıdaki formu doldurunuz</p>
 
+                {/* users info */}
+                <div className="my-4 bg-amber-200 p-2">
+                    <h2 className="text-sm font-semibold">Admin Girişi Bilgileri:</h2>
+                    <p className="text-sm">E-posta: admin1@gmail.com</p>
+                    <p className="text-sm">Parola: admin1</p>
+                    <hr />
+                    <h2 className="text-sm font-semibold">Kullanıcı Girişi Bilgileri:</h2>
+                    <p className="text-sm">E-posta: user1@gmail.com</p>
+                    <p className="text-sm">Parola: qweqwe</p>
+                </div>
+
                 {/* form */}
                 <form onSubmit={handleSubmit} className="form">
                     {/* email */}

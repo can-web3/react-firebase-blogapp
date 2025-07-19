@@ -6,7 +6,7 @@ import { auth, db } from '../firebase'
 import { getFirebaseErrorMessage } from '../utils/firebaseErrors'
 import AuthContext from '../contexts/AuthContext'
 import AuthReducer from '../reducers/AuthReducer'
-import { doc, getDoc } from 'firebase/firestore'
+import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore'
 
 export default function AuthState({ 
     children
@@ -34,6 +34,7 @@ export default function AuthState({
                         username: firebaseUser?.displayName,
                         email: firebaseUser?.email,
                         role: userData?.role,
+                        favorites: userData?.favorites || [],
                     }
                 })
             }else{
@@ -80,12 +81,41 @@ export default function AuthState({
         }
     }
 
+    const toggleFavorite = async (blogId: string) => {
+        if (!state.auth) {
+        toast.error("Lütfen önce giriş yapın")
+        return
+        }
+        const userRef = doc(db, "users", state.auth.id)
+        try {
+        if (state.auth.favorites.includes(blogId)) {
+            await updateDoc(userRef, {
+            favorites: arrayRemove(blogId)
+            })
+        } else {
+            await updateDoc(userRef, {
+            favorites: arrayUnion(blogId)
+            })
+        }
+        dispatch({ type: "TOGGLE_FAVORITE", blogId })
+        toast.success(
+            state.auth.favorites.includes(blogId)
+            ? "Favorilerden çıkarıldı"
+            : "Favorilere eklendi"
+        )
+        } catch (err: any) {
+        console.error(err)
+        toast.error("Favori güncellenirken hata oluştu")
+        }
+    }
+
     return (
         <AuthContext.Provider value={{
             loading: loading,
             auth: state.auth,
             login,
             logout,
+            toggleFavorite,
         }}>
             {children}
         </AuthContext.Provider>

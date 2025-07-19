@@ -10,6 +10,22 @@
     @apply container mx-auto py-4 xl:px-0 px-2;
   }
 
+  h1{
+    @apply text-xl font-semibold mb-2;
+  }
+
+  h2{
+    @apply text-lg font-semibold mb-2;
+  }
+
+  h3{
+    @apply text-[16px] font-semibold mb-2;
+  }
+
+  p {
+    @apply text-base leading-relaxed text-gray-700;
+  }
+
   .badge-primary {
     @apply bg-orange-600 px-2 py-1 text-sm inline-block mb-2 text-white;
   }
@@ -35,7 +51,7 @@
   }
 
   .nav-link {
-    @apply transition-all ease-in hover:text-orange-600;
+    @apply transition-all ease-in hover:text-orange-600 cursor-pointer;
   }
 
   .label {
