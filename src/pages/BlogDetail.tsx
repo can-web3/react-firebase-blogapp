@@ -11,12 +11,15 @@ import Blog from "../components/Blog"
 
 export default function BlogDetail() {
     const { slug } = useParams()
-    const { blogs, blog, getBlogBySlug, loading } = useContext(BlogContext)
+    const { blogs, blog, getBlogBySlug, getBlogsForBlogDetailPage } = useContext(BlogContext)
     const { auth, toggleFavorite } = useContext(AuthContext)
     const isFav = auth?.favorites.includes(blog?.id)
 
     useEffect(() => {
-        getBlogBySlug(slug)
+        (async () => {
+            const res = await getBlogBySlug(slug)
+            const res2 = await getBlogsForBlogDetailPage(blog.id)
+        })()
     }, [slug])
 
     if(!blog)
@@ -24,8 +27,8 @@ export default function BlogDetail() {
 
     return (
         <main className="container">
-            <div className="grid grid-cols-4 gap-16">
-                <div className="col-span-3">
+            <div className="grid xl:grid-cols-4 gap-16">
+                <div className="xl:col-span-3">
                     <div className="flex flex-wrap gap-4 items-center justify-between mb-4">
                         <div>
                             <Link to={`/kategori/${blog?.category?.slug}`} className="badge-primary">{blog?.category?.name}</Link>
@@ -46,7 +49,7 @@ export default function BlogDetail() {
                     </div>
                 </div>
                 
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid xl:grid-cols-1 lg:grid-cols-2 grid-col-1 gap-4">
                     { blogs?.map(blog => (
                         <Blog key={blog.id} blog={blog} />
                     )) }

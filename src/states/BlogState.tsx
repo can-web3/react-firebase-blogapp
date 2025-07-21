@@ -4,6 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  FieldPath,
   getDoc,
   getDocs,
   orderBy,
@@ -275,6 +276,50 @@ export default function BlogState({
     }
   }
 
+  const getBlogsForBlogDetailPage = async () => {
+    const excludeId = "6" 
+
+    const q = query(
+      collection(db, "blogs"),
+      orderBy("createdAt", "desc"),
+      limitTo(6)
+    )
+    const snap = await getDocs(q)
+
+    const blogsRaw = snap.docs.map(docSnap => ({
+      id: docSnap.id,
+      ...(docSnap.data() as Omit<BlogInterface, "id">)
+    }))
+
+    const topFiveRaw = blogsRaw
+      .filter(blog => blog.id !== excludeId)
+      .slice(0, 5)
+
+    const blogsWithCategory = await Promise.all(
+      topFiveRaw.map(async blog => {
+        let category: (CategoryInterface & { id: string }) | null = null
+        try {
+          const catRef = doc(db, "categories", blog.categoryId)
+          const catSnap = await getDoc(catRef)
+          if (catSnap.exists()) {
+            category = {
+              id: catSnap.id,
+              ...(catSnap.data() as CategoryInterface)
+            }
+          }
+        } catch (err) {
+          console.error("Kategori yüklenirken hata:", err)
+        }
+        return { ...blog, category }
+      })
+    )
+
+    dispatch({
+      type: "GET_BLOGS",
+      blogs: blogsWithCategory
+    })
+  }
+
   return (
     <BlogContext.Provider
       value={{
@@ -288,6 +333,7 @@ export default function BlogState({
         deleteBlogById,
         getBlogBySlug,
         getBlogsByCategorySlug,
+        getBlogsForBlogDetailPage,
       }}
     >
       {children}
