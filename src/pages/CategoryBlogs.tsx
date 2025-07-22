@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom"
 import Loading from "../components/Loading"
 import CategoryContext from "../contexts/CategoryContext"
 import Blogs from "../components/Blogs"
+import Seo from "../components/Seo"
 
 export default function CategoryBlogs() {
     const { slug } = useParams()
@@ -20,6 +21,9 @@ export default function CategoryBlogs() {
 
     return (
         <main className="container">
+            <Seo 
+                title={category?.name}
+            />
             <section>
                 <h1>{category.name}</h1>
                 <Blogs blogs={blogs} />

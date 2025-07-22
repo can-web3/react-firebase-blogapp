@@ -1,6 +1,7 @@
 import { useContext, useEffect } from "react"
 import BlogContext from "../contexts/BlogContext"
 import Blogs from "../components/Blogs"
+import Seo from "../components/Seo"
 
 export default function BlogsPage() {
   const { blogs, getBlogs } = useContext(BlogContext)
@@ -11,6 +12,9 @@ export default function BlogsPage() {
 
   return (
     <main>
+      <Seo 
+        title="Bloglar"
+        />
       <section className="container">
         <h1>Bloglar</h1>
         <Blogs blogs={blogs} />
