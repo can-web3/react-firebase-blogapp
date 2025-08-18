@@ -18,8 +18,8 @@ export default function BlogDetail() {
 
     useEffect(() => {
         (async () => {
-            const res = await getBlogBySlug(slug)
-            const res2 = await getBlogsForBlogDetailPage(blog.id)
+            await getBlogBySlug(slug)
+            await getBlogsForBlogDetailPage()
         })()
     }, [slug])
 

@@ -7,6 +7,7 @@ import {
   FieldPath,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
   serverTimestamp,
@@ -276,13 +277,11 @@ export default function BlogState({
     }
   }
 
-  const getBlogsForBlogDetailPage = async () => {
-    const excludeId = "6" 
-
+  const getBlogsForBlogDetailPage = async (excludeId: string) => {
     const q = query(
       collection(db, "blogs"),
       orderBy("createdAt", "desc"),
-      limitTo(6)
+      limit(4) 
     )
     const snap = await getDocs(q)
 
@@ -291,12 +290,10 @@ export default function BlogState({
       ...(docSnap.data() as Omit<BlogInterface, "id">)
     }))
 
-    const topFiveRaw = blogsRaw
-      .filter(blog => blog.id !== excludeId)
-      .slice(0, 5)
+    const topSixRaw = blogsRaw.filter(blog => blog.id !== excludeId).slice(0, 6)
 
     const blogsWithCategory = await Promise.all(
-      topFiveRaw.map(async blog => {
+      topSixRaw.map(async blog => {
         let category: (CategoryInterface & { id: string }) | null = null
         try {
           const catRef = doc(db, "categories", blog.categoryId)

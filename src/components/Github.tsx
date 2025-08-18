@@ -4,6 +4,8 @@ export default function Github() {
     return (
         <div className="bg-amber-200 p-4 text-center">
             <p className="mb-0">
+                <span className="font-semibold">Admin girişi ile admin paneline giriş yapabilirsiniz.</span>
+                <br />
                 <span>Github'ta incelemek için lütfen </span> 
                 <Link to='https://github.com/can-web3/react-firebase-blogapp' className="text-blue-600 underline" target="_blank">
                     tıklayınız

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowDown, faBars, faSortDown } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faSortDown } from '@fortawesome/free-solid-svg-icons'
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../contexts/AuthContext";
 import CategoryContext from "../contexts/CategoryContext";
@@ -46,14 +46,6 @@ export default function Navbar() {
                                         </li>
                                     )) }
                                 </ul>
-                            </li>
-
-                            <li>
-                                <Link to='/' className={`nav-link ${isOpenMenu && 'hover:bg-white hover:text-orange-600'}`}>Hakkımızda</Link>
-                            </li>
-
-                            <li>
-                                <Link to='/' className={`nav-link ${isOpenMenu && 'hover:bg-white hover:text-orange-600'}`}>İletişim</Link>
                             </li>
 
                             { auth ? (
