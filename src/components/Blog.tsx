@@ -14,7 +14,7 @@ export default function Blog({
         <Link to={`/blog/${blog?.slug}`} key={blog?.id} className="border border-gray-400">
             <div className="relative">
                 <img
-                    className="w-full min-h-54 object-cover"
+                    className="w-full h-60 object-cover"
                     src={blog?.image}
                     alt={blog?.title}
                 />
