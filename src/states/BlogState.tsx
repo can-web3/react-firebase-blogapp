@@ -37,6 +37,7 @@ export default function BlogState({
   const [state, dispatch] = useReducer(BlogReducer, initialState)
 
   const getBlogs = async () => {
+    setLoading(true)
     const q = query(
       collection(db, "blogs"),
       orderBy("createdAt", "desc")
@@ -75,6 +76,8 @@ export default function BlogState({
       type: "GET_BLOGS",
       blogs: blogsWithCategory
     })
+
+    setLoading(false)
   }
 
   const createBlog = async (values) => {
@@ -322,7 +325,7 @@ export default function BlogState({
       value={{
         blogs: state.blogs,
         blog: state.blog,
-        loading: state.loading,
+        loading: loading,
         getBlogs,
         createBlog,
         getBlogById,

@@ -1,15 +1,12 @@
+import type BlogsInterface from "../interfaces/BlogsInterface"
 import Blog from "./Blog"
+import Loading from "./Loading"
 
-interface BlogsProps {
-  blogs?: Array<{
-    id: string
-    image: string
-    title: string
-    category?: { slug: string; name: string }
-  }>
-}
+export default function Blogs({ blogs, loading }: BlogsInterface) {
+  if(loading) return (
+    <Loading />
+  )
 
-export default function Blogs({ blogs }: BlogsProps) {
   if (!blogs || blogs.length === 0) return (
     <div className="bg-amber-200 p-2">
       Blog bulunamadı

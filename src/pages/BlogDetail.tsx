@@ -6,7 +6,6 @@ import { formatDate } from "../utils/formatDate"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faHeart } from "@fortawesome/free-solid-svg-icons"
 import AuthContext from "../contexts/AuthContext"
-import Blogs from "../components/Blogs"
 import Blog from "../components/Blog"
 import Seo from "../components/Seo"
 
@@ -29,7 +28,7 @@ export default function BlogDetail() {
     return (
         <main className="container">
             <Seo 
-            title={blog?.title}
+                title={blog?.title}
             />
             <div className="grid xl:grid-cols-4 gap-16">
                 <div className="xl:col-span-3">

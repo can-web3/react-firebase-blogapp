@@ -6,7 +6,7 @@ import Seo from "../components/Seo"
 
 export default function Home() {
   const { auth } = useContext(AuthContext)
-  const { blogs, getBlogs } = useContext(BlogContext)
+  const { blogs, getBlogs, loading } = useContext(BlogContext)
 
   useEffect(() => {
     getBlogs()
@@ -19,7 +19,7 @@ export default function Home() {
       />
       <section className="container">
         <h1>Anasayfa</h1>
-        <Blogs blogs={blogs} />
+        <Blogs blogs={blogs} loading={loading} />
       </section>
     </main>
   )
