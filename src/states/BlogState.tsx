@@ -280,44 +280,48 @@ export default function BlogState({
     }
   }
 
-  const getBlogsForBlogDetailPage = async (excludeId: string) => {
-    const q = query(
-      collection(db, "blogs"),
-      orderBy("createdAt", "desc"),
-      limit(4) 
-    )
-    const snap = await getDocs(q)
+  const getBlogsForBlogDetailPage = async (slug: string) => {
+    try {
+      const q = query(
+        collection(db, "blogs"),
+        orderBy("createdAt", "desc"),
+        limit(5)
+      )
+      const snap = await getDocs(q)
 
-    const blogsRaw = snap.docs.map(docSnap => ({
-      id: docSnap.id,
-      ...(docSnap.data() as Omit<BlogInterface, "id">)
-    }))
+      const blogsRaw = snap.docs
+        .map(docSnap => ({
+          id: docSnap.id,
+          ...(docSnap.data() as Omit<BlogInterface, "id">)
+        }))
+        .filter(blog => blog.slug !== slug)
 
-    const topSixRaw = blogsRaw.filter(blog => blog.id !== excludeId).slice(0, 6)
-
-    const blogsWithCategory = await Promise.all(
-      topSixRaw.map(async blog => {
-        let category: (CategoryInterface & { id: string }) | null = null
-        try {
-          const catRef = doc(db, "categories", blog.categoryId)
-          const catSnap = await getDoc(catRef)
-          if (catSnap.exists()) {
-            category = {
-              id: catSnap.id,
-              ...(catSnap.data() as CategoryInterface)
+      const blogsWithCategory = await Promise.all(
+        blogsRaw.map(async blog => {
+          let category: (CategoryInterface & { id: string }) | null = null
+          try {
+            const catRef = doc(db, "categories", blog.categoryId)
+            const catSnap = await getDoc(catRef)
+            if (catSnap.exists()) {
+              category = {
+                id: catSnap.id,
+                ...(catSnap.data() as CategoryInterface)
+              }
             }
+          } catch (err) {
+            console.error("Kategori yüklenirken hata:", err)
           }
-        } catch (err) {
-          console.error("Kategori yüklenirken hata:", err)
-        }
-        return { ...blog, category }
-      })
-    )
+          return { ...blog, category }
+        })
+      )
 
-    dispatch({
-      type: "GET_BLOGS",
-      blogs: blogsWithCategory
-    })
+      dispatch({
+        type: "GET_BLOGS",
+        blogs: blogsWithCategory
+      })
+    } catch (err) {
+      console.error("getBlogsForBlogDetailPage error:", err)
+    }
   }
 
   return (

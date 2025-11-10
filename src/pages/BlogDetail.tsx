@@ -1,6 +1,6 @@
 import { useContext, useEffect } from "react"
 import BlogContext from "../contexts/BlogContext"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import Loading from "../components/Loading"
 import { formatDate } from "../utils/formatDate"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -8,22 +8,27 @@ import { faHeart } from "@fortawesome/free-solid-svg-icons"
 import AuthContext from "../contexts/AuthContext"
 import Blog from "../components/Blog"
 import Seo from "../components/Seo"
+import NotFound from "./NotFound"
 
 export default function BlogDetail() {
+    const navigate = useNavigate()
     const { slug } = useParams()
-    const { blogs, blog, getBlogBySlug, getBlogsForBlogDetailPage } = useContext(BlogContext)
+    const { blogs, blog, getBlogBySlug, getBlogsForBlogDetailPage, loading } = useContext(BlogContext)
     const { auth, toggleFavorite } = useContext(AuthContext)
     const isFav = auth?.favorites.includes(blog?.id)
 
     useEffect(() => {
         (async () => {
             await getBlogBySlug(slug)
-            await getBlogsForBlogDetailPage()
+            await getBlogsForBlogDetailPage(slug)
         })()
     }, [slug])
 
-    if(!blog)
+    if(loading)
         return <Loading />
+
+    if(!blog)
+        return <NotFound />
 
     return (
         <main className="container">

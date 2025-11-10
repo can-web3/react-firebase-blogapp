@@ -15,6 +15,7 @@ import AdminEditBlog from "../pages/admin/blogs/AdminEditBlog";
 import BlogDetail from "../pages/BlogDetail";
 import CategoryBlogs from "../pages/CategoryBlogs";
 import BlogsPage from "../pages/BlogsPage";
+import NotFound from "../pages/NotFound";
 
 const router = createBrowserRouter([
     {
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
                 ]
             },
 
+            { path: '*', element: <NotFound /> }
         ]
     },
     {
@@ -53,7 +55,7 @@ const router = createBrowserRouter([
             { path: 'bloglar/ekle', element: <AdminCreateBlog /> },
             { path: 'bloglar/:id/duzenle', element: <AdminEditBlog /> },
         ]
-    }
+    },
 ])
 
 export default router
