@@ -9,6 +9,7 @@ export interface FormInputProps {
   value?: string
   error?: string
   required?: boolean
+  disabled?: boolean
 }
 
 const FormInput: React.FC<FormInputProps> = ({
@@ -18,7 +19,8 @@ const FormInput: React.FC<FormInputProps> = ({
   onChange,
   value,
   error,
-  required = true
+  required = true,
+  disabled = false,
 }) => {
   const isFile = type === 'file'
 
@@ -37,6 +39,7 @@ const FormInput: React.FC<FormInputProps> = ({
         {...(!isFile && { value })}
         {...(isFile && { accept: 'image/jpeg,image/png,image/gif,image/webp' })}
         required={required}
+        disabled={disabled}
       />
 
       {error && <div className="text-red-600 text-sm">{error}</div>}

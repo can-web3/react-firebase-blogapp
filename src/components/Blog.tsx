@@ -27,7 +27,7 @@ export default function Blog({
                         e.stopPropagation();
                         toggleFavorite(blog?.id);
                     }}
-                    className="absolute top-4 right-4 z-20">
+                    className="absolute top-4 right-4 z-20 cursor-pointer">
                         <FontAwesomeIcon icon={faHeart} className={`${isFav ? 'text-red-600' : 'text-gray-400' } text-2xl`} />
                 </div>
             </div>

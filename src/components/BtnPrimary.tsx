@@ -2,7 +2,7 @@ export default function BtnPrimary({
     isSubmitting
 }) {
   return (
-    <div>
+    <div className="text-end">
         <button
             type="submit"
             className="btn-primary mt-4"

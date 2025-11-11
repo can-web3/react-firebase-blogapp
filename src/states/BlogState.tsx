@@ -4,7 +4,7 @@ import {
   collection,
   deleteDoc,
   doc,
-  FieldPath,
+  documentId,
   getDoc,
   getDocs,
   limit,
@@ -307,7 +307,7 @@ export default function BlogState({
       const q = query(
         collection(db, "blogs"),
         orderBy("createdAt", "desc"),
-        limit(5)
+        limit(3)
       )
       const snap = await getDocs(q)
 
@@ -366,6 +366,104 @@ export default function BlogState({
     }
   }
 
+  const getBlogsByBlogIds = async (blogIds: string[]) => {
+    try {
+      setLoading(true)
+
+      if (!blogIds.length) {
+        dispatch({ type: "GET_BLOGS", blogs: [] })
+        return
+      }
+
+      if (blogIds.length > 10) {
+        console.error("in sorgusu en fazla 10 id kabul eder")
+        return
+      }
+
+      const q = query(
+        collection(db, "blogs"),
+        where(documentId(), "in", blogIds)
+      )
+
+      const snap = await getDocs(q)
+
+      const blogsRaw = snap.docs.map(docSnap => ({
+        id: docSnap.id,
+        ...(docSnap.data() as Omit<BlogInterface, "id">)
+      }))
+
+      // ✅ Her blog için kategori bilgisini getir
+      const blogsWithCategory = await Promise.all(
+        blogsRaw.map(async blog => {
+          let category: (CategoryInterface & { id: string }) | null = null
+
+          try {
+            const catRef = doc(db, "categories", blog.categoryId)
+            const catSnap = await getDoc(catRef)
+            if (catSnap.exists()) {
+              category = {
+                id: catSnap.id,
+                ...(catSnap.data() as CategoryInterface)
+              }
+            }
+          } catch (err) {
+            console.error("Kategori yüklenirken hata:", err)
+          }
+
+          return {
+            ...blog,
+            category
+          }
+        })
+      )
+
+      dispatch({
+        type: "GET_BLOGS",
+        blogs: blogsWithCategory
+      })
+
+    } catch (err) {
+      console.error("getBlogsByBlogIds error:", err)
+      toast.error("Favori bloglar yüklenirken hata oluştu")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getBlogsCommentsByUserId = async (userId: string) => {
+    try {
+      setLoading(true)
+
+      const commentsQ = query(
+        collection(db, "comments"),
+        where("userId", "==", userId)
+      )
+      const commentsSnap = await getDocs(commentsQ)
+
+      if (commentsSnap.empty) {
+        dispatch({ type: "GET_BLOGS", blogs: [] })
+        return
+      }
+
+      console.log('commentsSnap.docs', commentsSnap.docs)
+
+      const blogIds = Array.from(
+        new Set(
+          commentsSnap.docs.map(docSnap =>
+            docSnap.ref.parent.parent!.id 
+          )
+        )
+      )
+
+      await getBlogsByBlogIds(blogIds)
+    } catch (err) {
+      console.error("getBlogsCommentsByUserId error:", err)
+      toast.error("Yorum yaptığın bloglar yüklenirken hata oluştu")
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <BlogContext.Provider
       value={{
@@ -381,6 +479,8 @@ export default function BlogState({
         getBlogsByCategorySlug,
         getBlogsForBlogDetailPage,
         addCommentToBlog,
+        getBlogsByBlogIds,
+        getBlogsCommentsByUserId,
       }}
     >
       {children}

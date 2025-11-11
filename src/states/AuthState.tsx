@@ -83,29 +83,29 @@ export default function AuthState({
 
     const toggleFavorite = async (blogId: string) => {
         if (!state.auth) {
-        toast.error("Lütfen önce giriş yapın")
-        return
+            toast.error("Lütfen önce giriş yapın")
+            return
         }
         const userRef = doc(db, "users", state.auth.id)
         try {
-        if (state.auth.favorites.includes(blogId)) {
-            await updateDoc(userRef, {
-            favorites: arrayRemove(blogId)
-            })
-        } else {
-            await updateDoc(userRef, {
-            favorites: arrayUnion(blogId)
-            })
-        }
-        dispatch({ type: "TOGGLE_FAVORITE", blogId })
-        toast.success(
-            state.auth.favorites.includes(blogId)
-            ? "Favorilerden çıkarıldı"
-            : "Favorilere eklendi"
-        )
+            if (state.auth.favorites.includes(blogId)) {
+                await updateDoc(userRef, {
+                favorites: arrayRemove(blogId)
+                })
+            } else {
+                await updateDoc(userRef, {
+                favorites: arrayUnion(blogId)
+                })
+            }
+            dispatch({ type: "TOGGLE_FAVORITE", blogId })
+            toast.success(
+                state.auth.favorites.includes(blogId)
+                ? "Favorilerden çıkarıldı"
+                : "Favorilere eklendi"
+            )
         } catch (err: any) {
-        console.error(err)
-        toast.error("Favori güncellenirken hata oluştu")
+            console.error(err)
+            toast.error("Favori güncellenirken hata oluştu")
         }
     }
 
