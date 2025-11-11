@@ -16,6 +16,8 @@ import BlogDetail from "../pages/BlogDetail";
 import CategoryBlogs from "../pages/CategoryBlogs";
 import BlogsPage from "../pages/BlogsPage";
 import NotFound from "../pages/NotFound";
+import AuthMiddleware from "../middlewares/AuthMiddleware";
+import Profile from "../pages/auth/Profile";
 
 const router = createBrowserRouter([
     {
@@ -26,7 +28,6 @@ const router = createBrowserRouter([
             { path: 'bloglar', element: <BlogsPage /> },
             { path: 'blog/:slug', element: <BlogDetail /> },
             { path: 'kategori/:slug', element: <CategoryBlogs /> },
-            { path: 'favorilerim', element: <CategoryBlogs /> },
 
             // guest middleware
             { 
@@ -35,6 +36,15 @@ const router = createBrowserRouter([
                 children: [
                     { path: 'kayit-ol', element: <Register /> },
                     { path: 'giris-yap', element: <Login /> },
+                ]
+            },
+
+            // auth middleware
+            {
+                path: '',
+                element: <AuthMiddleware />,
+                children: [
+                    { path: 'profil', element: <Profile /> },
                 ]
             },
 
