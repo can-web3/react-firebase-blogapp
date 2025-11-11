@@ -27,7 +27,8 @@ const Slider = ({ blogs, loading }) => {
         >
         {blogs.map((item) => (
             <SwiperSlide key={item.id}>
-            <div
+            <Link 
+                to={`/blog/${item.slug}`}
                 style={{
                 width: "100%",
                 height: "320px",
@@ -46,11 +47,9 @@ const Slider = ({ blogs, loading }) => {
                 }}
             >
                 <h2 style={{ fontSize: "18px", fontWeight: "600", textShadow: "0px 2px 5px black" }}>
-                    <Link to={`/blog/${item.slug}`}>
                     {item.title}
-                    </Link>
                 </h2>
-            </div>
+            </Link>
             </SwiperSlide>
         ))}
         </Swiper>

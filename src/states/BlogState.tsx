@@ -89,6 +89,7 @@ export default function BlogState({
           slug: slugify(values.title),
           content: values.content,
           categoryId: values.categoryId,
+          show_in_slider: values.show_in_slider,
           createdAt: serverTimestamp(),
       }
 
@@ -161,6 +162,7 @@ export default function BlogState({
         slug: slugify(values.title),
         content: values.content,
         categoryId: values.categoryId,
+        show_in_slider: values.show_in_slider,
         updatedAt: serverTimestamp(),
       }
 
@@ -219,8 +221,25 @@ export default function BlogState({
       }
     } catch (err) {
       console.error("Kategori yüklenirken hata:", err)
-    }finally{
-      setLoading(false)
+    }
+
+    let comments: any[] = []
+    try {
+      const commentsRef = collection(db, `blogs/${docSnap.id}/comments`)
+      const commentsQuery = query(commentsRef, orderBy("createdAt", "asc"))
+
+      const commentsSnap = await getDocs(commentsQuery)
+      comments = commentsSnap.docs.map(c => ({
+        id: c.id,
+        ...(c.data() as {
+          userId: string
+          displayName: string
+          comment: string
+          createdAt: any
+        })
+      }))
+    } catch (err) {
+      console.error("Yorumlar yüklenirken hata:", err)
     }
 
     dispatch({
@@ -229,11 +248,14 @@ export default function BlogState({
         id: docSnap.id,
         ...blogData,
         category,
+        comments, 
       },
     })
 
+    setLoading(false)
     return true
   }
+
 
   const getBlogsByCategorySlug = async (slug: string): Promise<boolean> => {
     try {
@@ -324,6 +346,26 @@ export default function BlogState({
     }
   }
 
+  const addCommentToBlog = async (blogId: string, comment: string, userId: string, displayName: string, blogSlug: string) => {
+    try {
+      await addDoc(collection(db, `blogs/${blogId}/comments`), {
+        userId,
+        displayName,
+        comment: comment.trim().replace(/\s+/g, ' '),
+        createdAt: serverTimestamp(),
+      })
+      
+      await getBlogBySlug(blogSlug)
+
+      toast.success("Yorum başarıyla eklendi")
+      return true
+    } catch (err) {
+      console.error("addCommentToBlog error:", err)
+      toast.error("Yorum eklenirken hata oluştu")
+      return false
+    }
+  }
+
   return (
     <BlogContext.Provider
       value={{
@@ -338,6 +380,7 @@ export default function BlogState({
         getBlogBySlug,
         getBlogsByCategorySlug,
         getBlogsForBlogDetailPage,
+        addCommentToBlog,
       }}
     >
       {children}

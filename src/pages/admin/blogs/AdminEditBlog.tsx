@@ -9,6 +9,7 @@ import CategoryContext from "../../../contexts/CategoryContext";
 import Select from "../../../components/Select";
 import TextEditor from "../../../components/TextEditor";
 import BlogContext from "../../../contexts/BlogContext";
+import Checkbox from "../../../components/Checkbox";
 
 
 export default function AdminEditBlog() {
@@ -21,6 +22,7 @@ export default function AdminEditBlog() {
             image: null as File | null,
             title: blog?.title || '',
             categoryId: blog?.categoryId || '',
+            show_in_slider: blog?.show_in_slider || false,
             content: blog?.content || '',
         },
         enableReinitialize: true,
@@ -91,6 +93,14 @@ export default function AdminEditBlog() {
                         error={errors.content}
                     />
 
+                    {/* show_in_slider */}
+                    <Checkbox
+                        name="show_in_slider"
+                        title="Slider'da Gözüksün mü?"
+                        checked={values.show_in_slider}
+                        onChange={handleChange}
+                        error={errors.show_in_slider}
+                    />
 
                     <BtnPrimary 
                         isSubmitting={isSubmitting}

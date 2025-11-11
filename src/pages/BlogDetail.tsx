@@ -9,13 +9,23 @@ import AuthContext from "../contexts/AuthContext"
 import Blog from "../components/Blog"
 import Seo from "../components/Seo"
 import NotFound from "./NotFound"
+import { useFormik } from "formik"
 
 export default function BlogDetail() {
     const navigate = useNavigate()
     const { slug } = useParams()
-    const { blogs, blog, getBlogBySlug, getBlogsForBlogDetailPage, loading } = useContext(BlogContext)
+    const { blogs, blog, getBlogBySlug, getBlogsForBlogDetailPage, loading, addCommentToBlog } = useContext(BlogContext)
     const { auth, toggleFavorite } = useContext(AuthContext)
     const isFav = auth?.favorites.includes(blog?.id)
+
+    const { handleSubmit, values, handleChange } = useFormik({
+        initialValues: {
+            comment: '',
+        },
+        onSubmit: async values => {
+            await addCommentToBlog(blog?.id, values.comment, auth?.id, auth?.username, blog?.slug)
+        }
+    })
 
     useEffect(() => {
         (async () => {
@@ -62,6 +72,52 @@ export default function BlogDetail() {
                         <Blog key={blog.id} blog={blog} />
                     )) }
                 </div>
+            </div>
+
+            {/* add comment */}
+            <div className="mb-4">
+                { auth ? (
+                    <div className="flex flex-col gap-4">
+                        <form onSubmit={handleSubmit}>
+                            <h2 className="text-2xl font-semibold mb-4">Yorum Yazın</h2>
+
+                            <textarea 
+                                className="w-full border border-gray-300 rounded-md p-2 mb-2 outline-0" 
+                                rows={4} 
+                                placeholder="Yorumunuzu yazın..."
+                                name="comment"
+                                value={values.comment}
+                                onChange={handleChange}
+                            ></textarea>
+                            <div className="flex justify-end">
+                                <button className="btn-primary">Gönder</button>
+                            </div>
+                        </form>
+                    </div>
+                ) : (
+                    <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-4 py-3 rounded mt-4">
+                        Yorum yapabilmek için lütfen <Link to="/giris-yap" className="text-blue-600 underline">giriş yapın</Link>.
+                    </div>
+                ) }
+            </div>
+
+            {/* comments */}
+            <div className="flex flex-col gap-4">
+                <h2 className="text-2xl font-semibold mb-4">Yorumlar ({blog?.comments?.length})</h2>
+
+                { blog?.comments?.map(comment => (
+                    <div key={comment.id} className="border border-gray-400 rounded-md px-2 py-4 flex gap-4">
+                        <div>
+                            <div>
+                                <span className="font-semibold">{comment.displayName}</span> 
+                                <span className="text-gray-600 text-sm"> - {formatDate(comment.createdAt)}</span>
+                            </div>
+                            <div className="mt-2">
+                                {comment.comment}
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
         </main>
     )

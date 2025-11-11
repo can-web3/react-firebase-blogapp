@@ -19,9 +19,12 @@ export default function Home() {
       <section className="container">
         <h1>Anasayfa</h1>
 
-        <Slider blogs={blogs.slice(0, 5)} loading={loading} />
+        <Slider 
+          blogs={blogs.filter(blog => blog.show_in_slider).slice(0, 5)} 
+          loading={loading} 
+        />
 
-        <Blogs blogs={blogs.slice(5)} loading={loading} />
+        <Blogs blogs={blogs.filter(blog => !blog.show_in_slider)} loading={loading} />
       </section>
     </main>
   )

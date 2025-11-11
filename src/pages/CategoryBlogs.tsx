@@ -16,7 +16,10 @@ export default function CategoryBlogs() {
         getCategoryBySlug(slug)
     }, [slug])
 
-    if(!blogs || !category || loading)
+    if(loading)
+        return <Loading />
+
+    if(!blogs || !category)
         return <Loading />
 
     return (
@@ -26,7 +29,7 @@ export default function CategoryBlogs() {
             />
             <section>
                 <h1>{category.name}</h1>
-                <Blogs blogs={blogs} />
+                <Blogs blogs={blogs} loading={loading} />
             </section>
         </main>
     )

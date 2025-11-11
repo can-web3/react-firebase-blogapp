@@ -11,13 +11,15 @@ export default function Blog({
     const isFav = auth?.favorites.includes(blog?.id)
 
     return (
-        <Link to={`/blog/${blog?.slug}`} key={blog?.id} className="border border-gray-400">
+        <div key={blog?.id} className="border border-gray-400">
             <div className="relative">
-                <img
-                    className="w-full h-60 object-cover"
-                    src={blog?.image}
-                    alt={blog?.title}
-                />
+                <Link to={`/blog/${blog?.slug}`}>
+                    <img
+                        className="w-full h-60 object-cover"
+                        src={blog?.image}
+                        alt={blog?.title}
+                    />
+                </Link>
 
                 <div 
                      onClick={(e) => {
@@ -36,8 +38,12 @@ export default function Blog({
                 >
                     {blog?.category?.name}
                 </Link>
-                <h2 className="font-semibold">{blog?.title}</h2>
+                <h2 className="font-semibold">
+                    <Link to={`/blog/${blog?.slug}`}>
+                        {blog?.title}
+                    </Link>
+                </h2>
             </div>
-        </Link>
+        </div>
     )
 }

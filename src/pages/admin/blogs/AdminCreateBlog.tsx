@@ -9,7 +9,7 @@ import CategoryContext from "../../../contexts/CategoryContext";
 import Select from "../../../components/Select";
 import TextEditor from "../../../components/TextEditor";
 import BlogContext from "../../../contexts/BlogContext";
-
+import Checkbox from "../../../components/Checkbox";
 
 export default function AdminCreateBlog() {
     const navigate = useNavigate()
@@ -21,6 +21,7 @@ export default function AdminCreateBlog() {
             title: '',
             categoryId: '',
             content: '',
+            show_in_slider: false,
         },
         validationSchema: blogValidation(false),
         validateOnBlur: false,
@@ -84,6 +85,14 @@ export default function AdminCreateBlog() {
                         error={errors.content}
                     />
 
+                    {/* show_in_slider */}
+                    <Checkbox
+                        name="show_in_slider"
+                        title="Slider'da Gözüksün mü?"
+                        checked={values.show_in_slider}
+                        onChange={handleChange}
+                        error={errors.show_in_slider}
+                    />
 
                     <BtnPrimary 
                         isSubmitting={isSubmitting}
