@@ -73,7 +73,7 @@ export default function Profile() {
                 </div>
             </form>
 
-            <h2 className="mt-6">Favorilerim</h2>
+            <h2 className="mt-6 text-center">Favorilerim</h2>
 
             <div className="mt-6">
                 <Blogs blogs={blogs} loading={loading} />
