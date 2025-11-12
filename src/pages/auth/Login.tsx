@@ -9,7 +9,7 @@ import AuthContext from "../../contexts/AuthContext";
 
 export default function Login() {
     const navigate = useNavigate()
-    const { login } = useContext(AuthContext)
+    const { login, loginWithGoogle } = useContext(AuthContext)
 
     const { values, errors, isSubmitting, handleSubmit, handleChange } = useFormik({
         initialValues: {
@@ -44,6 +44,22 @@ export default function Login() {
                     <p className="text-sm">E-posta: user1@gmail.com</p>
                     <p className="text-sm">Parola: qweqwe</p>
                 </div>
+
+                {/* login with google */}
+                <button
+                    type="button"
+                    onClick={loginWithGoogle}
+                    className="cursor-pointer w-full my-4 flex items-center justify-center gap-2 border border-gray-300 py-2 rounded hover:bg-gray-100 transition"
+                >
+                    <img
+                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                        alt="Google"
+                        className="w-5 h-5"
+                    />
+                    <span>Google ile Giriş Yap</span>
+                </button>
+
+                <p className="text-center">Veya</p>
 
                 {/* form */}
                 <form onSubmit={handleSubmit} className="form">

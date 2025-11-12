@@ -1,12 +1,12 @@
 import { useEffect, useReducer, useState } from 'react'
 import type StateInterface from '../types/StateInterface'
 import { toast } from 'react-toastify'
-import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
+import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { auth, db } from '../firebase'
 import { getFirebaseErrorMessage } from '../utils/firebaseErrors'
 import AuthContext from '../contexts/AuthContext'
 import AuthReducer from '../reducers/AuthReducer'
-import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore'
+import { arrayRemove, setDoc, arrayUnion, doc, getDoc, updateDoc } from 'firebase/firestore'
 
 export default function AuthState({ 
     children
@@ -49,7 +49,6 @@ export default function AuthState({
         return unsubscribe;
     }, []);
 
-
     const login = async (values: any)=> {
         setLoading(true)
         try {
@@ -61,6 +60,39 @@ export default function AuthState({
             console.log(code)
             const message = getFirebaseErrorMessage(code);
             toast.error(message)
+            return false
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const loginWithGoogle = async () => {
+        setLoading(true)
+        const provider = new GoogleAuthProvider()
+
+        try {
+            const result = await signInWithPopup(auth, provider)
+            const user = result.user
+
+            // Kullanıcı Firestore'da yoksa ekle
+            const userRef = doc(db, "users", user.uid)
+            const userSnap = await getDoc(userRef)
+
+            if (!userSnap.exists()) {
+                await setDoc(userRef, {
+                email: user.email,
+                username: user.displayName,
+                role: "user",
+                favorites: [],
+                createdAt: new Date(),
+                })
+            }
+
+            toast.success("Google ile giriş başarılı!")
+            return true
+        } catch (err: any) {
+            console.error(err)
+            toast.error("Google girişi başarısız!")
             return false
         } finally {
             setLoading(false)
@@ -116,6 +148,7 @@ export default function AuthState({
             login,
             logout,
             toggleFavorite,
+            loginWithGoogle,
         }}>
             {children}
         </AuthContext.Provider>
