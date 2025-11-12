@@ -28,7 +28,7 @@ export default function Profile() {
     })
 
     useEffect(() => {
-        if(auth?.favorites && auth.favorites.length > 0){
+        if(auth?.favorites){
             getBlogsByBlogIds(auth.favorites)
         }
     }, [])
@@ -73,7 +73,7 @@ export default function Profile() {
                 </div>
             </form>
 
-            <h2 className="text-center">Favorilerim</h2>
+            <h2 className="mt-6">Favorilerim</h2>
 
             <div className="mt-6">
                 <Blogs blogs={blogs} loading={loading} />
